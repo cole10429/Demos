@@ -1,226 +1,902 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CROWBOT · Autonomous Fleet</title>
-  <style>
-    :root {
-      --bg: #0b0f1a;
-      --card: #141928;
-      --accent: #7c3aed;
-      --gold: #d4a017;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --border: #312e81;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at 15% 20%, rgba(124,58,237,0.18), transparent 35%),
-                  radial-gradient(circle at 85% 10%, rgba(212,160,23,0.10), transparent 40%),
-                  var(--bg);
-      color: var(--text);
-      line-height: 1.55;
-    }
-    .wrap { width: min(1120px, 92vw); margin: 0 auto; }
-    .hero {
-      text-align: center;
-      padding: 84px 0 52px;
-      border: 1px solid rgba(124,58,237,0.35);
-      border-radius: 20px;
-      margin-top: 28px;
-      background: linear-gradient(120deg, rgba(124,58,237,0.18), rgba(11,15,26,0.95), rgba(212,160,23,0.10));
-      background-size: 200% 200%;
-      animation: pulse 12s ease-in-out infinite;
-      box-shadow: 0 0 0 1px rgba(124,58,237,0.2) inset, 0 0 45px rgba(124,58,237,0.16);
-    }
-    @keyframes pulse {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .crow { font-size: 96px; margin-bottom: 8px; }
-    h1 {
-      margin: 0;
-      font-size: clamp(44px, 9vw, 92px);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      color: #f8fafc;
-      text-shadow: 0 0 18px rgba(124,58,237,0.72), 0 0 45px rgba(124,58,237,0.40);
-      font-weight: 900;
-    }
-    .tagline {
-      margin-top: 14px;
-      color: var(--gold);
-      font-size: clamp(19px, 3vw, 31px);
-      font-style: italic;
-      font-weight: 700;
-    }
-    .sub {
-      margin-top: 10px;
-      color: #cbd5e1;
-      font-size: clamp(14px, 2.2vw, 22px);
-    }
-    section { margin-top: 44px; }
-    h2 {
-      margin: 0 0 18px;
-      font-size: clamp(24px, 3.2vw, 34px);
-      font-weight: 800;
-      letter-spacing: 0.01em;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 14px;
-      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
-      min-height: 128px;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 10px 30px rgba(124,58,237,0.28);
-    }
-    .card .title { font-weight: 800; font-size: 18px; margin-bottom: 6px; }
-    .card .model { color: #c4b5fd; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
-    .card .role { color: var(--muted); font-size: 14px; }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      background: linear-gradient(90deg, rgba(76,29,149,0.58), rgba(49,46,129,0.9));
-      border: 1px solid rgba(124,58,237,0.45);
-      border-radius: 16px;
-      padding: 14px;
-    }
-    .stat {
-      text-align: center;
-      background: rgba(15,23,42,0.75);
-      border-radius: 12px;
-      border: 1px solid rgba(124,58,237,0.35);
-      padding: 13px 10px;
-    }
-    .stat .n { font-size: 30px; font-weight: 900; color: #f8fafc; line-height: 1; }
-    .stat .l { color: #cbd5e1; font-size: 12px; margin-top: 7px; letter-spacing: .03em; text-transform: uppercase; }
-    .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .feature {
-      background: #10172a;
-      border: 1px solid #2e1065;
-      border-radius: 14px;
-      padding: 18px;
-    }
-    .feature h3 { margin: 0 0 8px; color: #ddd6fe; font-size: 20px; }
-    .feature p { margin: 0; color: #94a3b8; }
-    .badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-    }
-    .badge {
-      border: 1px solid #312e81;
-      border-radius: 999px;
-      padding: 7px 12px;
-      background: #111827;
-      color: #e5e7eb;
-      font-weight: 600;
-      font-size: 13px;
-    }
-    footer {
-      margin-top: 46px;
-      border-top: 1px solid rgba(124,58,237,0.5);
-      color: #94a3b8;
-      text-align: center;
-      padding: 18px 0 30px;
-      font-size: 14px;
-    }
-    @media (max-width: 920px) {
-      .grid, .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    @media (max-width: 640px) {
-      .grid, .feature-grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .hero { padding: 62px 16px 38px; }
-      .crow { font-size: 84px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crowbot Fleet Explorer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.4/cytoscape.min.js" defer
+  onerror="window.__cyFailed=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js" defer
+  onerror="window.__cyFailed=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.js" defer
+  onerror="window.__cyFailed=true"></script>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --card-hover: #1c2129; --border: #30363d;
+  --text: #e6edf3; --dim: #8b949e; --bright: #f0f6fc;
+  --purple: #a371f7; --purple-bg: rgba(163,113,247,0.15);
+  --blue: #58a6ff; --blue-bg: rgba(88,166,255,0.15);
+  --green: #3fb950; --green-bg: rgba(63,185,80,0.15);
+  --orange: #f0883e; --orange-bg: rgba(240,136,62,0.15);
+  --red: #f85149; --red-bg: rgba(248,81,73,0.12);
+  --gray: #8b949e; --gray-bg: rgba(139,148,158,0.15);
+  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; min-height:100vh; }
+#app { max-width:1200px; margin:0 auto; padding:1rem; }
+
+/* Header */
+.header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.75rem; padding:0.75rem 0; border-bottom:1px solid var(--border); margin-bottom:1.25rem; }
+.header h1 { font-size:1.5rem; color:var(--bright); font-weight:700; letter-spacing:-0.5px; cursor:pointer; }
+.header h1:hover { color:var(--purple); }
+.meta-line { font-size:0.75rem; color:var(--dim); }
+.freshness { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+.fresh { background:var(--green); }
+
+/* Nav */
+.nav-bar { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem; }
+.nav-btn { padding:0.4rem 0.85rem; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--dim); font-size:0.8rem; cursor:pointer; transition:all 0.15s; font-weight:500; }
+.nav-btn:hover { border-color:var(--dim); color:var(--text); }
+.nav-btn.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg); }
+.nav-btn.risk { border-color:var(--red); color:var(--red); }
+.nav-btn.risk.active { background:var(--red-bg); }
+
+/* Breadcrumbs */
+.breadcrumb { font-size:0.8rem; color:var(--dim); margin-bottom:1rem; }
+.breadcrumb a { color:var(--blue); text-decoration:none; cursor:pointer; }
+.breadcrumb a:hover { text-decoration:underline; }
+.breadcrumb .sep { margin:0 0.4rem; }
+
+/* Search */
+.search-wrap { position:relative; flex:1; min-width:180px; max-width:350px; }
+.search-wrap input { width:100%; padding:0.4rem 0.75rem 0.4rem 2rem; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:0.85rem; outline:none; }
+.search-wrap input:focus { border-color:var(--purple); }
+.search-wrap::before { content:'🔍'; position:absolute; left:0.6rem; top:50%; transform:translateY(-50%); font-size:0.75rem; }
+.search-results { position:absolute; top:100%; left:0; right:0; background:var(--card); border:1px solid var(--border); border-radius:8px; margin-top:4px; z-index:100; max-height:300px; overflow-y:auto; display:none; }
+.search-results.show { display:block; }
+.search-item { padding:0.5rem 0.75rem; cursor:pointer; font-size:0.85rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.5rem; }
+.search-item:hover { background:var(--card-hover); }
+.search-item:last-child { border-bottom:none; }
+.search-tag { font-size:0.65rem; padding:0.1rem 0.4rem; border-radius:4px; font-weight:600; text-transform:uppercase; }
+
+/* Grid */
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:1.25rem; }
+.grid-3 { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem; }
+
+/* Cards */
+.card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; display:flex; flex-direction:column; gap:0.65rem; transition:all 0.15s; cursor:pointer; position:relative; }
+.card:hover { border-color:var(--dim); background:var(--card-hover); }
+.card-header { display:flex; align-items:center; gap:0.65rem; }
+.card-emoji { font-size:1.5rem; line-height:1; flex-shrink:0; width:2rem; text-align:center; }
+.card-title { font-size:1.05rem; font-weight:600; color:var(--bright); }
+.card-sub { font-size:0.8rem; color:var(--dim); margin-top:0.1rem; }
+.card-body { font-size:0.85rem; color:var(--dim); }
+.card-count { font-size:2rem; font-weight:700; color:var(--bright); }
+.card-domain { border-left:3px solid; padding-left:1rem; }
+
+/* Status dot */
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-left:0.5rem; flex-shrink:0; }
+.dot-green { background:var(--green); }
+.dot-amber { background:var(--orange); }
+.dot-red { background:var(--red); }
+.dot-gray { background:#484f58; }
+
+/* Badges */
+.badge { display:inline-block; padding:0.15rem 0.5rem; border-radius:10px; font-size:0.72rem; font-weight:600; white-space:nowrap; }
+.b-purple { background:var(--purple-bg); color:var(--purple); }
+.b-blue { background:var(--blue-bg); color:var(--blue); }
+.b-green { background:var(--green-bg); color:var(--green); }
+.b-orange { background:var(--orange-bg); color:var(--orange); }
+.b-red { background:var(--red-bg); color:var(--red); }
+.b-gray { background:var(--gray-bg); color:var(--gray); }
+.risk-badge { font-size:0.65rem; padding:0.1rem 0.4rem; border-radius:4px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* Meta badges (sandbox, heartbeat) */
+.meta-badges { display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:auto; }
+.meta-badge { display:inline-flex; align-items:center; gap:0.25rem; padding:0.15rem 0.45rem; border-radius:6px; font-size:0.68rem; font-weight:500; border:1px solid var(--border); color:var(--dim); }
+.meta-badge.sb-off { border-color:var(--green); color:var(--green); }
+.meta-badge.sb-docker { border-color:var(--orange); color:var(--orange); }
+.meta-badge.sb-restricted { border-color:var(--red); color:var(--red); }
+.meta-badge.hb { border-color:var(--purple); color:var(--purple); }
+
+/* Model display */
+.model-line { display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; }
+.model-name { font-family:var(--mono); font-size:0.82rem; font-weight:500; }
+.fallback-item { font-size:0.78rem; color:var(--dim); font-family:var(--mono); padding-left:0.5rem; border-left:2px solid var(--border); }
+
+/* Tables */
+.table-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+th { text-align:left; padding:0.6rem 0.75rem; border-bottom:2px solid var(--border); color:var(--dim); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px; }
+td { padding:0.5rem 0.75rem; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+td.mono { font-family:var(--mono); font-size:0.8rem; }
+
+/* Detail view */
+.detail { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; }
+.detail h2 { font-size:1.3rem; color:var(--bright); margin-bottom:0.25rem; }
+.detail h3 { font-size:0.95rem; color:var(--bright); margin:1.25rem 0 0.5rem; padding-bottom:0.3rem; border-bottom:1px solid var(--border); }
+.detail-role { color:var(--dim); font-size:0.9rem; margin-bottom:1rem; }
+.kv { display:flex; gap:0.5rem; padding:0.35rem 0; font-size:0.85rem; }
+.kv-label { color:var(--dim); min-width:140px; flex-shrink:0; font-weight:500; }
+.kv-value { color:var(--text); }
+.kv-value.mono { font-family:var(--mono); font-size:0.82rem; }
+
+/* Timeline */
+.timeline { position:relative; padding-left:2.5rem; }
+.timeline::before { content:''; position:absolute; left:1rem; top:0; bottom:0; width:2px; background:var(--border); }
+.tl-item { position:relative; padding:0.5rem 0 0.5rem 1rem; }
+.tl-item::before { content:''; position:absolute; left:-1.55rem; top:0.75rem; width:10px; height:10px; border-radius:50%; border:2px solid var(--border); background:var(--bg); }
+.tl-item.oracle::before { border-color:var(--purple); background:var(--purple-bg); }
+.tl-item.ops::before { border-color:var(--blue); background:var(--blue-bg); }
+.tl-item.researcher::before { border-color:var(--green); background:var(--green-bg); }
+.tl-time { font-size:0.75rem; color:var(--dim); font-family:var(--mono); }
+.tl-name { font-size:0.9rem; font-weight:500; color:var(--bright); }
+.tl-desc { font-size:0.78rem; color:var(--dim); }
+
+/* Risk view */
+.risk-cols { display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; }
+.risk-col { background:var(--card); border-radius:10px; padding:1rem; border:1px solid var(--border); }
+.risk-col h3 { font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.75rem; padding-bottom:0.4rem; border-bottom:1px solid var(--border); }
+.risk-col.spof h3 { color:var(--red); border-bottom-color:var(--red); }
+.risk-col.degraded h3 { color:var(--orange); border-bottom-color:var(--orange); }
+.risk-col.robust h3 { color:var(--green); border-bottom-color:var(--green); }
+.risk-item { padding:0.4rem 0; font-size:0.85rem; border-bottom:1px solid var(--border); }
+.risk-item:last-child { border-bottom:none; }
+.risk-item .label { font-weight:500; color:var(--bright); }
+.risk-item .note { font-size:0.78rem; color:var(--dim); margin-top:0.15rem; }
+
+/* Cascade */
+.cascade { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; margin-top:1rem; }
+.cascade-header { display:flex; align-items:center; gap:0.5rem; cursor:pointer; }
+.cascade-header h4 { font-size:0.9rem; color:var(--bright); }
+.cascade-body { display:none; padding-top:0.75rem; }
+.cascade.open .cascade-body { display:block; }
+.cascade-arrow { transition:transform 0.2s; color:var(--dim); }
+.cascade.open .cascade-arrow { transform:rotate(90deg); }
+.impact-list { list-style:none; padding-left:0; }
+.impact-list li { padding:0.25rem 0; font-size:0.85rem; color:var(--dim); }
+.impact-list li::before { content:'→ '; color:var(--orange); }
+
+/* Graph */
+#graph-container { width:100%; height:500px; background:var(--card); border:1px solid var(--border); border-radius:10px; }
+.graph-fallback { padding:2rem; text-align:center; color:var(--dim); }
+
+/* Section headers */
+.section-header { display:flex; align-items:center; gap:0.5rem; margin:1.5rem 0 1rem; }
+.section-header h2 { font-size:1.15rem; color:var(--bright); font-weight:600; }
+
+/* Responsive */
+@media (max-width:768px) {
+  #app { padding:0.75rem; }
+  .header h1 { font-size:1.25rem; }
+  .grid { grid-template-columns:1fr; }
+  .grid-3 { grid-template-columns:1fr; }
+  .risk-cols { grid-template-columns:1fr; }
+  .kv { flex-direction:column; gap:0.15rem; }
+  .kv-label { min-width:auto; }
+  .search-wrap { max-width:100%; }
+  #graph-container { height:350px; }
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="hero">
-      <div class="crow">🐦‍⬛</div>
-      <h1>CROWBOT</h1>
-      <div class="tagline">Getting it right over getting it done.</div>
-      <div class="sub">A 9-agent autonomous AI fleet running 24/7</div>
-    </header>
+<div id="app"></div>
+<script>
+// === FLEET DATA (auto-generated) ===
+const D = {"meta": {"generated": "2026-03-02 03:27 ET", "version": "2026.2.26", "script": "generate-fleet-explorer.py"}, "agents": [{"id": "main", "emoji": "🐦⬛", "role": "Orchestrator — thinks, plans, delegates, verifies", "tier": "core", "model": {"primary": {"provider": "anthropic", "model": "claude-sonnet-4-6"}, "fallbacks": [{"provider": "openai-codex", "model": "gpt-5.3-codex"}]}, "sandbox": "off", "tools": {"profile": "full", "allow": ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_send", "session_status", "message", "tts", "image"], "deny": ["process", "write", "edit", "apply_patch", "browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": {"interval": "30m", "hours": "07:00–00:00", "channel": "#crowbot-briefing", "channelId": "1474100476742992074", "model": "anthropic/claude-haiku-4-5"}, "memorySearch": true, "workspace": "rw", "discordChannel": "", "discordChannelId": "", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "admiral", "emoji": "⚓", "role": "Emergency escalation — break-glass, Cole-approved only", "tier": "conditional", "model": {"primary": {"provider": "anthropic", "model": "claude-opus-4-6"}, "fallbacks": [{"provider": "github-copilot", "model": "claude-opus-4-6"}]}, "sandbox": "off", "tools": {"profile": "full", "allow": [], "deny": ["browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": null, "memorySearch": true, "workspace": "rw", "discordChannel": "", "discordChannelId": "", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "coder", "emoji": "💻", "role": "Implementation — writes, edits, tests code", "tier": "core", "model": {"primary": {"provider": "openai-codex", "model": "gpt-5.3-codex"}, "fallbacks": [{"provider": "anthropic", "model": "claude-sonnet-4-6"}]}, "sandbox": "off", "tools": {"profile": "coding", "allow": [], "deny": ["browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": null, "memorySearch": true, "workspace": "rw", "discordChannel": "#coder", "discordChannelId": "1475179481995149382", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "oracle", "emoji": "🔮", "role": "Analysis, memory management, briefing", "tier": "core", "model": {"primary": {"provider": "anthropic", "model": "claude-sonnet-4-6"}, "fallbacks": [{"provider": "anthropic", "model": "claude-haiku-4-5"}]}, "sandbox": "off", "tools": {"profile": "coding", "allow": [], "deny": ["browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": {"interval": "1h", "hours": "07:00–22:00", "channel": "#oracle", "channelId": "1475179466207789198", "model": "anthropic/claude-haiku-4-5"}, "memorySearch": true, "workspace": "rw", "discordChannel": "#oracle", "discordChannelId": "1475179466207789198", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "researcher", "emoji": "🔍", "role": "Web research — Docker-sandboxed, read-only", "tier": "specialized", "model": {"primary": {"provider": "anthropic", "model": "claude-sonnet-4-6"}, "fallbacks": [{"provider": "anthropic", "model": "claude-haiku-4-5"}]}, "sandbox": "non-main", "tools": {"profile": "full", "allow": ["web_fetch", "read", "browser", "tavily_search", "tavily_extract", "serper_search", "exa_search", "exa_contents", "perplexity_search"], "deny": ["apply_patch", "image", "gateway", "memory_get", "tts", "memory_search", "edit", "sessions_spawn", "sessions_history", "sessions_send", "process", "message", "sessions_list", "exec", "cron", "canvas", "write"]}, "heartbeat": null, "memorySearch": false, "workspace": "ro", "discordChannel": "#researcher", "discordChannelId": "1475179495886426123", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "ops", "emoji": "🔧", "role": "System maintenance, health checks, cron", "tier": "core", "model": {"primary": {"provider": "anthropic", "model": "claude-sonnet-4-6"}, "fallbacks": [{"provider": "anthropic", "model": "claude-haiku-4-5"}]}, "sandbox": "off", "tools": {"profile": "coding", "allow": [], "deny": ["browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": {"interval": "2h", "hours": "24/7", "channel": "#ops-health", "channelId": "1475011900457881763", "model": "anthropic/claude-haiku-4-5"}, "memorySearch": true, "workspace": "rw", "discordChannel": "#ops", "discordChannelId": "1475179507584467096", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "sanitizer", "emoji": "🛡️", "role": "On-demand security review, quarantine inspector", "tier": "conditional", "model": {"primary": {"provider": "anthropic", "model": "claude-sonnet-4-6"}, "fallbacks": []}, "sandbox": "non-main", "tools": {"profile": "full", "allow": ["read"], "deny": ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": null, "memorySearch": false, "workspace": "rw", "discordChannel": "", "discordChannelId": "", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "scribe", "emoji": "✍️", "role": "Writing, communications, proposals", "tier": "core", "model": {"primary": {"provider": "anthropic", "model": "claude-sonnet-4-6"}, "fallbacks": [{"provider": "anthropic", "model": "claude-haiku-4-5"}]}, "sandbox": "off", "tools": {"profile": "coding", "allow": [], "deny": ["browser", "canvas", "web_search", "web_fetch"]}, "heartbeat": null, "memorySearch": true, "workspace": "rw", "discordChannel": "#scribe", "discordChannelId": "1475179520276435094", "hasModelOverrides": true, "overrideProviders": ["github-copilot", "lmstudio"]}, {"id": "lmstudio", "emoji": "🫀", "role": "Heartbeat scheduler — minimal context, cheap", "tier": "conditional", "model": {"primary": {"provider": "anthropic", "model": "claude-haiku-4-5"}, "fallbacks": []}, "sandbox": "non-main", "tools": {"profile": "minimal", "allow": [], "deny": ["browser", "canvas", "web_search", "web_fetch", "exec", "write", "edit", "process", "message", "sessions_spawn", "sessions_send", "sessions_list", "memory_search", "memory_get", "session_status", "image", "tts"]}, "heartbeat": null, "memorySearch": false, "workspace": "rw", "discordChannel": "", "discordChannelId": "", "hasModelOverrides": false, "overrideProviders": []}], "infrastructure": {"services": [{"name": "openclaw-gateway", "status": "active", "enabled": "enabled"}, {"name": "syncthing", "status": "active", "enabled": "enabled"}, {"name": "config-guardian.timer", "status": "active", "enabled": "enabled"}], "docker": [{"name": "openclaw-sbx-agent-researcher-d2f02e1f", "image": "openclaw-sandbox:bookworm-slim", "status": "Up 2 days", "restart": "no", "ports": ""}, {"name": "qdrant", "image": "qdrant/qdrant:latest", "status": "Up 5 days", "restart": "unless-stopped", "ports": "127.0.0.1:6333, 127.0.0.1:6334"}], "providers": [{"name": "Anthropic", "type": "API token", "status": "active", "endpoint": "api.anthropic.com", "color": "purple", "note": "No expiry"}, {"name": "OpenAI Codex", "type": "OAuth", "status": "active", "endpoint": "api.openai.com", "color": "green", "note": "Expires ~Mar 9"}, {"name": "GitHub Copilot", "type": "Device token", "status": "active", "endpoint": "api.individual.githubcopilot.com", "color": "blue", "note": "Static token"}, {"name": "LM Studio", "type": "Local", "status": "up", "endpoint": "172.31.192.1:1234", "color": "gray", "note": "Embeddings + Qwen3-4B"}], "qdrantPoints": "2497", "disk": {"total": "1007G", "used": "48G", "avail": "908G", "pct": "5%"}, "network": {"host": "desktop-h1e8sn1 (WSL2 Ubuntu on Windows 10 Pro)", "tailscaleIp": "100.109.178.54", "sshAccess": "key-only auth, Tailscale-only", "lmStudioIp": "172.31.192.1:1234", "gatewayPort": 18789, "gatewayBind": "loopback (127.0.0.1)"}}, "automation": {"cronJobs": [{"name": "memory-sweep", "schedule": "0 * * * *", "agent": "oracle", "time": "Every hour (07-23h)", "purpose": "Session context extraction, memory cleanup"}, {"name": "ops-health-check", "schedule": "0 */3 * * *", "agent": "ops", "time": "Every 3h (24/7)", "purpose": "System health, auto-remediation of safe issues"}, {"name": "system-map-refresh", "schedule": "0 4 * * *", "agent": "ops", "time": "04:00 ET", "purpose": "Auto-generate fleet topology reference"}, {"name": "stale-detection", "schedule": "0 5 * * *", "agent": "oracle", "time": "05:00 ET", "purpose": "Check docs drift from live config"}, {"name": "Daily AI Intel", "schedule": "0 6 * * *", "agent": "researcher", "time": "06:00 ET", "purpose": "AI news, trends, revenue-relevant findings"}, {"name": "oracle-morning-brief-prep", "schedule": "30 6 * * *", "agent": "oracle", "time": "06:30 ET", "purpose": "Prepare morning brief data"}, {"name": "Morning Brief", "schedule": "0 7 * * *", "agent": "oracle", "time": "07:00 ET", "purpose": "Cole's daily agenda and fleet status"}, {"name": "oracle-goal-review", "schedule": "0 9 * * *", "agent": "oracle", "time": "09:00 ET", "purpose": "Review goals, auto-dispatch research (max 3/day)"}, {"name": "EOD Summary", "schedule": "30 18 * * *", "agent": "oracle", "time": "18:30 ET", "purpose": "End-of-day fleet activity summary"}, {"name": "oracle-nightly-consolidation", "schedule": "30 0 * * *", "agent": "oracle", "time": "00:30 ET", "purpose": "Overnight memory consolidation"}, {"name": "oracle-weekly-retro", "schedule": "0 20 * * 0", "agent": "oracle", "time": "Sun 20:00 ET", "purpose": "Weekly fleet retrospective"}, {"name": "weekly-revenue-deep-dive", "schedule": "0 10 * * 3", "agent": "oracle", "time": "Wed 10:00 ET", "purpose": "Revenue opportunity analysis"}], "heartbeats": [{"agent": "main", "interval": "30m", "hours": "07:00–00:00 ET", "channel": "#crowbot-briefing", "model": "claude-haiku-4-5"}, {"agent": "oracle", "interval": "1h", "hours": "07:00–22:00 ET", "channel": "#oracle", "model": "claude-haiku-4-5"}, {"agent": "ops", "interval": "2h", "hours": "24/7", "channel": "#ops-health", "model": "claude-haiku-4-5"}], "cronRaw": "ID                                   Name                     Schedule                         Next       Last       Status    Target    Agent     \ncfa6098f-f38a-41c6-8d0e-bf0f6123f1a5 system-map-refresh       cron 0 4 * * * @ America/New_... in 33m     -          idle      isolated  ops\n41d751fc-9e11-4beb-935b-50cc4f29a870 memory-sweep             cron 0 * * * * @ America/New_... in 37m     22m ago    ok        isolated  oracle\n7cec1973-9140-429e-ac88-14168310c0e0 stale-detection          cron 0 5 * * * @ America/New_... in 2h      22h ago    ok        isolated  oracle\nbe2c5747-158c-4802-b9d0-9377150a7047 Daily AI Intel           cron 0 6 * * * @ America/New_... in 3h      21h ago    ok        isolated  researcher\nbeca94b3-8d05-4796-a118-5d438efd641a ops-health-check         cron 0 */3 * * * @ America/Ne... in 3h      26m ago    ok        isolated  ops\nd0ed12b9-5bf9-4e7d-8711-16e4464e98ed oracle-morning-brief-... cron 30 6 * * * @ America/New... in 3h      21h ago    ok        isolated  oracle\n5ebf1bbb-80df-40ad-92d6-04d6e49b1556 Morning Brief            cron 0 7 * * * @ America/New_... in 4h      20h ago    ok        isolated  oracle\ne9c4714f-f0bd-43a7-896d-e2c665e49629 oracle-goal-review       cron 0 9 * * * @ America/New_... in 6h      -          idle      isolated  oracle\n2b275bdf-dedd-48b1-9be1-30bd1f077a3e EOD Summary              cron 30 18 * * * @ America/Ne... in 15h     9h ago     ok        isolated  oracle\nf5c16172-791f-4271-9310-9f5fec70ed9f oracle-nightly-consol... cron 30 0 * * * @ America/New... in 21h     3h ago     ok        isolated  oracle\na24a4365-4e66-4bb4-9cfd-d35d73da3867 weekly-revenue-deep-dive cron 0 10 * * 3 @ America/New... in 2d      -          idle      isolated  oracle\n21b88d40-7027-4fe9-953f-1f594db1ccfa oracle-weekly-retro      cron 0 20 * * 0 @ America/New... in 7d      7h ago     ok        isolated  oracle"}, "communication": {"channels": [{"name": "#crowbot", "id": "1465125187120005283", "category": "cole", "purpose": "Primary conversation channel"}, {"name": "#crowbot-briefing", "id": "1474100476742992074", "category": "cole", "purpose": "Command center — briefs, intel, heartbeats"}, {"name": "#crowbot-2", "id": "1475179537741381672", "category": "cole", "purpose": "Parallel context branch"}, {"name": "#crowbot-3", "id": "1475179549078851666", "category": "cole", "purpose": "Parallel context branch"}, {"name": "#crowbot-4", "id": "1475179560919367700", "category": "cole", "purpose": "Parallel context branch"}, {"name": "#crowbot-5", "id": "1475179575255236860", "category": "cole", "purpose": "Parallel context branch"}, {"name": "#crowbot-6", "id": "1475179587439951902", "category": "cole", "purpose": "Parallel context branch"}, {"name": "#crowbot-activity", "id": "1473192069567746050", "category": "monitoring", "purpose": "Autonomous dispatch notifications"}, {"name": "#crowbot-alerts", "id": "1473192070477905921", "category": "monitoring", "purpose": "Config guardian alerts, critical failures"}, {"name": "#crowbot-memory", "id": "1473192071429882062", "category": "monitoring", "purpose": "Memory events"}, {"name": "#oracle", "id": "1475179466207789198", "category": "agent", "purpose": "Oracle heartbeats, analysis output", "agent": "oracle"}, {"name": "#coder", "id": "1475179481995149382", "category": "agent", "purpose": "Code implementation output", "agent": "coder"}, {"name": "#researcher", "id": "1475179495886426123", "category": "agent", "purpose": "Research findings", "agent": "researcher"}, {"name": "#ops", "id": "1475179507584467096", "category": "agent", "purpose": "Health check reports", "agent": "ops"}, {"name": "#scribe", "id": "1475179520276435094", "category": "agent", "purpose": "Writing and communications output", "agent": "scribe"}, {"name": "#ops-health", "id": "1475011900457881763", "category": "monitoring", "purpose": "Ops heartbeat destination"}], "routingRules": ["User-initiated tasks → respond in originating channel", "Autonomous dispatches (cron) → #crowbot-activity only", "Critical alerts → CRITICAL: prefix + @Cole mention", "NEVER route autonomous traffic through Cole’s branches (#crowbot-1 to -6)"]}, "security": {"structural": [{"name": "Tool deny lists", "desc": "Per-agent tool restrictions enforced by gateway", "strength": "strong"}, {"name": "Docker sandbox", "desc": "Researcher runs in Docker (bridge network, RO workspace)", "strength": "strong"}, {"name": "Config guardian", "desc": "Auto-reverts invalid config to golden backup every 5min", "strength": "strong"}, {"name": "Golden backup", "desc": "Read-only (444) config snapshot at ~/.openclaw/openclaw.json.golden", "strength": "strong"}, {"name": "BWS secret injection", "desc": "API keys never in config files — injected at runtime via bws run", "strength": "strong"}, {"name": "Loopback gateway", "desc": "Gateway bound to 127.0.0.1 — no external network access", "strength": "strong"}, {"name": "Network isolation", "desc": "Sanitizer + lmstudio: network=none Docker sandboxes", "strength": "strong"}], "behavioral": [{"name": "Approval workflow", "desc": "External actions, config changes, gateway restart require Cole"}, {"name": "Chain of command", "desc": "Main delegates, sub-agents execute, results flow back"}, {"name": "On-demand sanitizer", "desc": "High-risk content reviewed by isolated read-only agent"}, {"name": "Sub-agent output protocol", "desc": "Reports to results/*.md, one-line responses"}, {"name": "Critical alert escalation", "desc": "CRITICAL: prefix + @Cole for gateway down, disk >90%, security"}], "plugins": ["discord", "openclaw-tavily", "crowbot-enforcer", "memory-qdrant", "openclaw-serper", "openclaw-exa", "fleet-activity", "openclaw-perplexity"]}, "memory": {"vectorDb": {"collection": "fleet_memory", "points": "2497", "port": 6333}, "embeddings": {"primary": {"provider": "LM Studio", "model": "qwen3-embedding-0.6b", "dims": 1024, "endpoint": "172.31.192.1:1234"}, "fallback": {"provider": "OpenAI", "model": "text-embedding-3-small", "dims": 1024}}, "search": {"type": "Hybrid (vector + full-text)", "vectorWeight": 0.7, "textWeight": 0.3, "temporalDecay": "14-day half-life"}, "fileBased": {"dailyLogs": "54", "referenceFiles": "24"}, "sessionIndexing": {"window": "7 days", "chunkSize": "~1600 chars", "ttl": "90 days"}}, "cascades": [{"trigger": "Gateway down", "severity": "total", "impacts": ["All 9 agents go offline", "All 12 cron jobs stop firing", "All heartbeats stop", "Discord goes completely silent"], "recovery": "Cole runs: bws run -- openclaw gateway restart", "selfHeals": false}, {"trigger": "Anthropic API down", "severity": "major", "impacts": ["main, oracle, ops, scribe, researcher, sanitizer affected", "Fallback chains activate (Copilot, Codex)", "coder unaffected (Codex primary)"], "recovery": "Wait for Anthropic recovery; fleet partially functional via fallbacks", "selfHeals": true}, {"trigger": "LM Studio down", "severity": "degraded", "impacts": ["Embeddings fall back to OpenAI (costs money)", "Memory search still works", "Local Qwen3 models unavailable"], "recovery": "Restart LM Studio on Windows side; auto-fallback handles gap", "selfHeals": true}, {"trigger": "BWS token invalid", "severity": "major", "impacts": ["All bws run commands fail", "Gateway can’t restart", "CLI commands break", "Fleet runs until next restart needed"], "recovery": "Cole must re-authenticate BWS machine token", "selfHeals": false}, {"trigger": "Qdrant down", "severity": "degraded", "impacts": ["memory_search returns empty results", "Agents continue without vector context", "File-based memory still works"], "recovery": "docker restart qdrant", "selfHeals": false}, {"trigger": "Codex OAuth expires", "severity": "minor", "impacts": ["coder falls back to Sonnet 4.6", "Slightly slower implementation", "No data loss"], "recovery": "bws run -- openclaw models auth login --provider openai-codex", "selfHeals": false}, {"trigger": "Disk >90%", "severity": "major", "impacts": ["Session transcripts may fail to write", "Gateway logs may stop", "Ops auto-cleanup at 80% may not be enough"], "recovery": "Cole cleans up; ops auto-cleans at 80% threshold", "selfHeals": true}]};
 
-    <section>
-      <h2>Fleet Grid</h2>
-      <div class="grid">
-        <article class="card"><div class="title">🧠 main</div><div class="model">Sonnet 4.6</div><div class="role">Orchestrator (no exec, no write — pure delegation)</div></article>
-        <article class="card"><div class="title">⚙️ coder</div><div class="model">Codex 5.3</div><div class="role">Builder (full host exec + write)</div></article>
-        <article class="card"><div class="title">🔮 oracle</div><div class="model">Sonnet 4.6</div><div class="role">Analyst (memory, forecasting)</div></article>
-        <article class="card"><div class="title">🕵️ researcher</div><div class="model">Sonnet 4.6</div><div class="role">Web Intel (Docker sandboxed)</div></article>
-        <article class="card"><div class="title">🛠️ ops</div><div class="model">Sonnet 4.6</div><div class="role">System Health (24/7 monitoring)</div></article>
-        <article class="card"><div class="title">✍️ scribe</div><div class="model">Sonnet 4.6</div><div class="role">Writer (docs, comms)</div></article>
-        <article class="card"><div class="title">🔒 sanitizer</div><div class="model">Sonnet 4.6</div><div class="role">Security (on-demand, read-only)</div></article>
-        <article class="card"><div class="title">⚡ admiral</div><div class="model">Opus 4.6</div><div class="role">Emergency Escalation</div></article>
-        <article class="card"><div class="title">🤖 lmstudio</div><div class="model">Haiku 4.5</div><div class="role">Heartbeat + Local Embeddings</div></article>
-      </div>
-    </section>
+// === STATE ===
+let state = { view: 'hub', domain: null, component: null, riskView: false };
 
-    <section>
-      <h2>Stats Bar</h2>
-      <div class="stats">
-        <div class="stat"><div class="n">9</div><div class="l">Specialized Agents</div></div>
-        <div class="stat"><div class="n">12</div><div class="l">Autonomous Cron Jobs</div></div>
-        <div class="stat"><div class="n">2,400+</div><div class="l">Vector Memory Points</div></div>
-        <div class="stat"><div class="n">68</div><div class="l">Smoke Test Checks</div></div>
-        <div class="stat"><div class="n">24/7</div><div class="l">Autonomous Operation</div></div>
-      </div>
-    </section>
+// === HELPERS ===
+const $ = s => document.querySelector(s);
+const h = (tag, attrs, ...children) => {
+  const el = document.createElement(tag);
+  if (attrs) Object.entries(attrs).forEach(([k,v]) => {
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'html') el.innerHTML = v;
+    else el.setAttribute(k, v);
+  });
+  children.flat().forEach(c => {
+    if (c == null) return;
+    el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  });
+  return el;
+};
 
-    <section>
-      <h2>Architecture</h2>
-      <div class="feature-grid">
-        <article class="feature">
-          <h3>Structural Security</h3>
-          <p>Tool restrictions enforced at platform level. Agents literally can’t access tools outside their role.</p>
-        </article>
-        <article class="feature">
-          <h3>Vector Memory</h3>
-          <p>Qdrant-backed with hybrid search, temporal decay, and hourly deduplication sweeps.</p>
-        </article>
-        <article class="feature">
-          <h3>Agent-to-Agent Messaging</h3>
-          <p>Persistent agents coordinate via sessions_send with fire-and-forget + wake callbacks.</p>
-        </article>
-      </div>
-    </section>
+function providerColor(p) {
+  const m = { anthropic:'purple', 'openai-codex':'green', 'github-copilot':'blue', lmstudio:'gray' };
+  return m[p] || 'gray';
+}
+function providerBadge(p) {
+  return h('span', {class:'badge b-' + providerColor(p)}, p);
+}
+function sandboxBadge(mode) {
+  if (mode === 'off') return h('span', {class:'meta-badge sb-off'}, 'sandbox: off');
+  if (mode === 'non-main') return h('span', {class:'meta-badge sb-restricted'}, 'sandbox: isolated');
+  if (mode === 'default') return h('span', {class:'meta-badge sb-docker'}, 'sandbox: docker');
+  return h('span', {class:'meta-badge'}, 'sandbox: ' + mode);
+}
+function statusDot(status) {
+  const cls = status === 'active' || status === 'up' || status === 'ok' ? 'dot-green' :
+              status === 'degraded' || status === 'warn' ? 'dot-amber' :
+              status === 'down' || status === 'failed' ? 'dot-red' : 'dot-gray';
+  return h('span', {class:'dot ' + cls});
+}
+function navigate(view, domain, component) {
+  state = { view, domain, component, riskView: view === 'risk' };
+  history.pushState(state, '', '#' + view + (domain ? '/' + domain : '') + (component ? '/' + component : ''));
+  render();
+}
 
-    <section>
-      <h2>Tech Stack</h2>
-      <div class="badges">
-        <span class="badge">Claude Sonnet 4.6</span>
-        <span class="badge">OpenAI Codex 5.3</span>
-        <span class="badge">Qdrant</span>
-        <span class="badge">OpenClaw</span>
-        <span class="badge">Docker</span>
-        <span class="badge">Bitwarden Secrets</span>
-        <span class="badge">Tailscale</span>
-        <span class="badge">Discord</span>
-        <span class="badge">WSL2</span>
-      </div>
-    </section>
+// === SEARCH ===
+function buildSearchIndex() {
+  const items = [];
+  D.agents.forEach(a => items.push({ type:'Agent', name:a.id, emoji:a.emoji, nav:() => navigate('detail','agents',a.id) }));
+  D.automation.cronJobs.forEach(c => items.push({ type:'Cron', name:c.name, emoji:'⏰', nav:() => navigate('detail','automation',c.name) }));
+  D.infrastructure.services.forEach(s => items.push({ type:'Service', name:s.name, emoji:'⚙️', nav:() => navigate('detail','infrastructure',s.name) }));
+  D.infrastructure.providers.forEach(p => items.push({ type:'Provider', name:p.name, emoji:'🔌', nav:() => navigate('detail','infrastructure','prov-'+p.name) }));
+  D.communication.channels.forEach(ch => items.push({ type:'Channel', name:ch.name, emoji:'💬', nav:() => navigate('domain','communication',null) }));
+  return items;
+}
+const searchIndex = buildSearchIndex();
 
-    <footer>Built by Cole &amp; Crowbot · Running since 2026 · Barrie, Ontario · 🐦‍⬛</footer>
-  </div>
+// === RENDER FUNCTIONS ===
+
+function renderHeader() {
+  const meta = D.meta;
+  return h('div', {class:'header'},
+    h('h1', {onclick:() => navigate('hub',null,null)}, '🐦⬛ Crowbot Fleet'),
+    h('div', {class:'search-wrap'},
+      h('input', {type:'text', placeholder:'Search agents, services, cron...', oninput: onSearch, onfocus: onSearch, onblur: e => setTimeout(()=>$('.search-results')&&($('.search-results').className='search-results'),200) }),
+      h('div', {class:'search-results'})
+    ),
+    h('div', {class:'meta-line'},
+      h('span', {class:'freshness fresh'}),
+      'Generated: ' + meta.generated + ' • OpenClaw ' + meta.version
+    )
+  );
+}
+
+function onSearch(e) {
+  const q = e.target.value.toLowerCase();
+  const results = $('.search-results');
+  if (!q) { results.className = 'search-results'; return; }
+  const matches = searchIndex.filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
+  results.innerHTML = '';
+  if (matches.length === 0) {
+    results.appendChild(h('div', {class:'search-item', style:'color:var(--dim)'}, 'No results'));
+  }
+  matches.forEach(m => {
+    const tagColor = { Agent:'b-purple', Cron:'b-orange', Service:'b-blue', Provider:'b-green', Channel:'b-gray' }[m.type] || 'b-gray';
+    results.appendChild(h('div', {class:'search-item', onclick:() => { m.nav(); e.target.value=''; results.className='search-results'; } },
+      h('span', {class:'search-tag badge ' + tagColor}, m.type),
+      m.emoji + ' ' + m.name
+    ));
+  });
+  results.className = 'search-results show';
+}
+
+function renderNav() {
+  const views = [
+    ['hub', '🏠 Hub'],
+    ['agents', '🤖 Agents'],
+    ['infrastructure', '⚙️ Infrastructure'],
+    ['automation', '⏰ Automation'],
+    ['communication', '💬 Communication'],
+    ['security', '🔒 Security'],
+    ['memory', '🧠 Memory'],
+    ['graph', '🕸️ System Map'],
+    ['risk', '⚠️ Risk'],
+  ];
+  return h('nav', {class:'nav-bar'}, ...views.map(([id, label]) => {
+    const isActive = (state.view === id) || (state.view === 'domain' && state.domain === id) || (state.view === 'detail' && state.domain === id);
+    const cls = 'nav-btn' + (isActive ? ' active' : '') + (id === 'risk' ? ' risk' : '');
+    return h('button', {class:cls, onclick:() => {
+      if (id === 'hub') navigate('hub',null,null);
+      else if (id === 'graph' || id === 'risk') navigate(id,null,null);
+      else navigate('domain',id,null);
+    } }, label);
+  }));
+}
+
+function renderBreadcrumb() {
+  if (state.view === 'hub') return h('div');
+  const crumbs = [h('a', {onclick:() => navigate('hub',null,null)}, 'Hub')];
+  if (state.domain) {
+    crumbs.push(h('span', {class:'sep'}, '›'));
+    crumbs.push(h('a', {onclick:() => navigate('domain',state.domain,null)}, state.domain.charAt(0).toUpperCase() + state.domain.slice(1)));
+  }
+  if (state.component) {
+    crumbs.push(h('span', {class:'sep'}, '›'));
+    crumbs.push(h('span', null, state.component));
+  }
+  return h('div', {class:'breadcrumb'}, ...crumbs);
+}
+
+// === HUB VIEW ===
+function renderHub() {
+  const agentCount = D.agents.length;
+  const provCount = D.infrastructure.providers.length;
+  const cronCount = D.automation.cronJobs.length;
+  const domains = [
+    { id:'agents', emoji:'🤖', title:'Agents', count:agentCount, color:'purple', desc: agentCount + ' agents across ' + [...new Set(D.agents.map(a=>a.tier))].length + ' tiers' },
+    { id:'infrastructure', emoji:'⚙️', title:'Infrastructure', count: D.infrastructure.services.length + D.infrastructure.docker.length, color:'blue', desc:'Services, Docker, network, ' + provCount + ' providers' },
+    { id:'automation', emoji:'⏰', title:'Automation', count:cronCount, color:'orange', desc:cronCount + ' cron jobs, ' + D.automation.heartbeats.length + ' heartbeats' },
+    { id:'communication', emoji:'💬', title:'Communication', count: D.communication.channels.length, color:'purple', desc:'Discord channels, routing rules' },
+    { id:'security', emoji:'🔒', title:'Security', count: D.security.structural.length + D.security.behavioral.length, color:'red', desc:D.security.structural.length + ' structural + ' + D.security.behavioral.length + ' behavioral layers' },
+    { id:'memory', emoji:'🧠', title:'Memory', count: D.memory.vectorDb.points, color:'green', desc:'Qdrant vectors, ' + D.memory.fileBased.dailyLogs + ' daily logs' },
+  ];
+  return h('div', {class:'grid'}, ...domains.map(d =>
+    h('div', {class:'card card-domain', style:'border-left-color:var(--'+d.color+')', onclick:() => navigate('domain',d.id,null)},
+      h('div', {class:'card-header'},
+        h('span', {class:'card-emoji'}, d.emoji),
+        h('div', null,
+          h('div', {class:'card-title'}, d.title),
+          h('div', {class:'card-sub'}, d.desc)
+        ),
+        statusDot('active')
+      ),
+      h('div', {class:'card-count'}, String(d.count))
+    )
+  ));
+}
+
+// === AGENTS DOMAIN ===
+function renderAgentsDomain() {
+  const tiers = [['core','Core Agents'],['specialized','Specialized'],['conditional','Conditional / Rare']];
+  const sections = [];
+  tiers.forEach(([tier, label]) => {
+    const agents = D.agents.filter(a => a.tier === tier);
+    if (agents.length === 0) return;
+    sections.push(h('div', {class:'section-header'}, h('h2', null, label)));
+    sections.push(h('div', {class:'grid'}, ...agents.map(a => renderAgentCard(a))));
+  });
+  return h('div', null, ...sections);
+}
+
+function renderAgentCard(a) {
+  const p = a.model.primary;
+  return h('div', {class:'card', onclick:() => navigate('detail','agents',a.id)},
+    h('div', {class:'card-header'},
+      h('span', {class:'card-emoji'}, a.emoji),
+      h('div', null,
+        h('div', {class:'card-title'}, a.id),
+        h('div', {class:'card-sub'}, a.role)
+      )
+    ),
+    h('div', {class:'model-line'},
+      providerBadge(p.provider),
+      h('span', {class:'model-name'}, p.model)
+    ),
+    a.model.fallbacks.length > 0 ?
+      h('div', null, ...a.model.fallbacks.map(f =>
+        h('div', {class:'fallback-item'}, f.provider + '/' + f.model)
+      )) : h('div', {class:'fallback-item', style:'font-style:italic'}, 'no fallback'),
+    h('div', {class:'meta-badges'},
+      sandboxBadge(a.sandbox),
+      a.heartbeat ? h('span', {class:'meta-badge hb'}, '❤ ' + a.heartbeat.interval) : null,
+      a.memorySearch ? h('span', {class:'meta-badge'}, '🧠 memory') : null
+    )
+  );
+}
+
+// === AGENT DETAIL ===
+function renderAgentDetail(id) {
+  const a = D.agents.find(x => x.id === id);
+  if (!a) return h('div', null, 'Agent not found');
+  const p = a.model.primary;
+  const cronJobs = D.automation.cronJobs.filter(c => c.agent === id);
+
+  const deps = [];
+  if (id === 'main') deps.push('If main is down, no delegation occurs. Cron agents continue independently.');
+  if (id === 'oracle') deps.push('Morning/EOD briefs stop. Memory consolidation stops. Goal-review proactive loop stops.');
+  if (id === 'coder') deps.push('No code implementation. Main and oracle can still analyze and plan.');
+  if (id === 'researcher') deps.push('No web research. Fleet continues with existing knowledge.');
+  if (id === 'ops') deps.push('Health checks stop. Auto-remediation stops. Cron resets stop.');
+
+  return h('div', {class:'detail'},
+    h('div', {style:'display:flex;align-items:center;gap:0.75rem'},
+      h('span', {style:'font-size:2rem'}, a.emoji),
+      h('div', null,
+        h('h2', null, a.id),
+        h('div', {class:'detail-role'}, a.role)
+      )
+    ),
+    h('h3', null, 'Model Configuration'),
+    h('div', {class:'kv'}, h('span',{class:'kv-label'},'Primary'), h('div',{class:'kv-value'}, providerBadge(p.provider), h('span',{class:'model-name',style:'margin-left:0.4rem'}, p.model))),
+    ...a.model.fallbacks.map((f,i) =>
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Fallback '+(i+1)), h('div',{class:'kv-value'}, providerBadge(f.provider), h('span',{class:'model-name',style:'margin-left:0.4rem'}, f.model)))
+    ),
+    a.hasModelOverrides ? h('div',{class:'kv'}, h('span',{class:'kv-label'},'Overrides'), h('span',{class:'kv-value'}, 'Per-agent models.json: ' + a.overrideProviders.join(', '))) : null,
+
+    h('h3', null, 'Capabilities'),
+    h('div', {class:'kv'}, h('span',{class:'kv-label'},'Tool Profile'), h('span',{class:'kv-value mono'}, a.tools.profile)),
+    a.tools.allow.length > 0 ? h('div', {class:'kv'}, h('span',{class:'kv-label'},'Allowed Tools'), h('span',{class:'kv-value mono'}, a.tools.allow.join(', '))) : null,
+    a.tools.deny.length > 0 ? h('div', {class:'kv'}, h('span',{class:'kv-label'},'Denied Tools'), h('span',{class:'kv-value mono',style:'color:var(--red)'}, a.tools.deny.join(', '))) : null,
+    h('div', {class:'kv'}, h('span',{class:'kv-label'},'Sandbox'), h('span',{class:'kv-value'}, sandboxBadge(a.sandbox))),
+    h('div', {class:'kv'}, h('span',{class:'kv-label'},'Workspace'), h('span',{class:'kv-value mono'}, a.workspace)),
+    h('div', {class:'kv'}, h('span',{class:'kv-label'},'Memory Search'), h('span',{class:'kv-value'}, a.memorySearch ? '✅ enabled' : '❌ disabled')),
+
+    a.heartbeat ? h('div', null,
+      h('h3', null, 'Heartbeat'),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Interval'), h('span',{class:'kv-value'}, a.heartbeat.interval)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Active Hours'), h('span',{class:'kv-value'}, a.heartbeat.hours)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Channel'), h('span',{class:'kv-value'}, a.heartbeat.channel)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Model'), h('span',{class:'kv-value mono'}, a.heartbeat.model))
+    ) : null,
+
+    a.discordChannel ? h('div', null,
+      h('h3', null, 'Discord'),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Bound Channel'), h('span',{class:'kv-value'}, a.discordChannel)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Channel ID'), h('span',{class:'kv-value mono'}, a.discordChannelId))
+    ) : null,
+
+    cronJobs.length > 0 ? h('div', null,
+      h('h3', null, 'Cron Jobs (' + cronJobs.length + ')'),
+      ...cronJobs.map(c => h('div', {class:'kv'}, h('span',{class:'kv-label'},c.time), h('span',{class:'kv-value'},c.name + ' — ' + c.purpose)))
+    ) : null,
+
+    deps.length > 0 ? h('div', null,
+      h('h3', null, '⚠️ What Breaks If This Agent Fails?'),
+      ...deps.map(d => h('div', {style:'padding:0.25rem 0;font-size:0.85rem;color:var(--orange)'}, '→ ' + d))
+    ) : null
+  );
+}
+
+// === INFRASTRUCTURE DOMAIN ===
+function renderInfrastructureDomain() {
+  const infra = D.infrastructure;
+  return h('div', null,
+    h('div', {class:'section-header'}, h('h2', null, 'Services')),
+    h('div', {class:'table-wrap'},
+      h('table', null,
+        h('thead', null, h('tr', null, h('th',null,'Service'), h('th',null,'Status'), h('th',null,'Enabled'))),
+        h('tbody', null, ...infra.services.map(s =>
+          h('tr', null, h('td',{class:'mono'},s.name), h('td',null, s.status, statusDot(s.status)), h('td',null,s.enabled))
+        ))
+      )
+    ),
+
+    h('div', {class:'section-header'}, h('h2', null, 'Docker Containers')),
+    h('div', {class:'table-wrap'},
+      h('table', null,
+        h('thead', null, h('tr', null, h('th',null,'Container'), h('th',null,'Image'), h('th',null,'Status'), h('th',null,'Ports'))),
+        h('tbody', null, ...infra.docker.map(d =>
+          h('tr', null, h('td',{class:'mono'},d.name), h('td',{class:'mono'},d.image), h('td',null,d.status), h('td',{class:'mono'},d.ports))
+        ))
+      )
+    ),
+
+    h('div', {class:'section-header'}, h('h2', null, 'Providers')),
+    h('div', {class:'grid-3'}, ...infra.providers.map(p =>
+      h('div', {class:'card'},
+        h('div', {class:'card-header'},
+          h('span', {class:'badge b-' + p.color}, p.name),
+          statusDot(p.status === 'active' || p.status === 'up' ? 'active' : 'down')
+        ),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Auth'), h('span',{class:'kv-value'},p.type)),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Endpoint'), h('span',{class:'kv-value mono'},p.endpoint)),
+        p.note ? h('div', {class:'kv'}, h('span',{class:'kv-label'},'Note'), h('span',{class:'kv-value'},p.note)) : null
+      )
+    )),
+
+    h('div', {class:'section-header'}, h('h2', null, 'Network')),
+    h('div', {class:'detail', style:'margin-top:0'},
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Host'), h('span',{class:'kv-value'},infra.network.host)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Tailscale IP'), h('span',{class:'kv-value mono'},infra.network.tailscaleIp)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'SSH Access'), h('span',{class:'kv-value'},infra.network.sshAccess)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Gateway'), h('span',{class:'kv-value mono'},'port ' + infra.network.gatewayPort + ' (' + infra.network.gatewayBind + ')')),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'LM Studio'), h('span',{class:'kv-value mono'},infra.network.lmStudioIp)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Disk'), h('span',{class:'kv-value'}, infra.disk.used + ' / ' + infra.disk.total + ' (' + infra.disk.pct + ')'))
+    )
+  );
+}
+
+// === AUTOMATION DOMAIN ===
+function renderAutomationDomain() {
+  const crons = D.automation.cronJobs;
+  const hbs = D.automation.heartbeats;
+
+  const dailyCrons = crons.filter(c => !c.time.includes('Sun') && !c.time.includes('Wed') && !c.time.includes('Every'));
+  const recurringCrons = crons.filter(c => c.time.includes('Every'));
+  const weeklyCrons = crons.filter(c => c.time.includes('Sun') || c.time.includes('Wed'));
+
+  return h('div', null,
+    h('div', {class:'section-header'}, h('h2', null, 'Daily Schedule (ET)')),
+    h('div', {class:'timeline'},
+      ...dailyCrons.sort((a,b) => a.time.localeCompare(b.time)).map(c =>
+        h('div', {class:'tl-item ' + c.agent},
+          h('div', {class:'tl-time'}, c.time),
+          h('div', {class:'tl-name'}, c.name),
+          h('div', {class:'tl-desc'}, c.purpose + ' • ' + h('span',{class:'badge b-' + providerColor(c.agent === 'researcher' ? 'openai-codex' : 'anthropic')}, c.agent).outerHTML)
+        )
+      )
+    ),
+
+    recurringCrons.length > 0 ? h('div', null,
+      h('div', {class:'section-header'}, h('h2', null, 'Recurring')),
+      h('div', {class:'timeline'},
+        ...recurringCrons.map(c =>
+          h('div', {class:'tl-item ' + c.agent},
+            h('div', {class:'tl-time'}, c.time),
+            h('div', {class:'tl-name'}, c.name),
+            h('div', {class:'tl-desc'}, c.purpose)
+          )
+        )
+      )
+    ) : null,
+
+    weeklyCrons.length > 0 ? h('div', null,
+      h('div', {class:'section-header'}, h('h2', null, 'Weekly')),
+      h('div', {class:'timeline'},
+        ...weeklyCrons.map(c =>
+          h('div', {class:'tl-item ' + c.agent},
+            h('div', {class:'tl-time'}, c.time),
+            h('div', {class:'tl-name'}, c.name),
+            h('div', {class:'tl-desc'}, c.purpose)
+          )
+        )
+      )
+    ) : null,
+
+    h('div', {class:'section-header'}, h('h2', null, 'Heartbeats')),
+    h('div', {class:'grid-3'}, ...hbs.map(hb =>
+      h('div', {class:'card'},
+        h('div', {class:'card-title'}, hb.agent),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Interval'), h('span',{class:'kv-value'},hb.interval)),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Hours'), h('span',{class:'kv-value'},hb.hours)),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Channel'), h('span',{class:'kv-value'},hb.channel)),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Model'), h('span',{class:'kv-value mono'},hb.model))
+      )
+    ))
+  );
+}
+
+// === COMMUNICATION DOMAIN ===
+function renderCommunicationDomain() {
+  const cats = [['cole',"Cole's Channels"],['monitoring','Fleet Monitoring'],['agent','Agent Specialist']];
+  const sections = [];
+  cats.forEach(([cat, label]) => {
+    const chs = D.communication.channels.filter(c => c.category === cat);
+    if (chs.length === 0) return;
+    sections.push(h('div', {class:'section-header'}, h('h2', null, label)));
+    sections.push(h('div', {class:'table-wrap'},
+      h('table', null,
+        h('thead', null, h('tr', null, h('th',null,'Channel'), h('th',null,'Purpose'), cat==='agent'?h('th',null,'Agent'):null)),
+        h('tbody', null, ...chs.map(ch =>
+          h('tr', null,
+            h('td',{class:'mono'},ch.name),
+            h('td',null,ch.purpose),
+            cat==='agent'?h('td',null,ch.agent||''):null
+          )
+        ))
+      )
+    ));
+  });
+  sections.push(h('div', {class:'section-header'}, h('h2', null, 'Routing Rules')));
+  sections.push(h('div', {class:'detail',style:'margin-top:0'},
+    ...D.communication.routingRules.map(r => h('div', {style:'padding:0.3rem 0;font-size:0.85rem'}, '• ' + r))
+  ));
+  return h('div', null, ...sections);
+}
+
+// === SECURITY DOMAIN ===
+function renderSecurityDomain() {
+  const sec = D.security;
+  return h('div', null,
+    h('div', {class:'section-header'}, h('h2', null, 'Structural Layers (Enforced)')),
+    h('div', {class:'grid-3'}, ...sec.structural.map(s =>
+      h('div', {class:'card', style:'cursor:default'},
+        h('div', {class:'card-title'}, h('span',{class:'badge b-green',style:'margin-right:0.4rem'},'ENFORCED'), s.name),
+        h('div', {class:'card-body'}, s.desc)
+      )
+    )),
+    h('div', {class:'section-header'}, h('h2', null, 'Behavioral Conventions')),
+    h('div', {class:'grid-3'}, ...sec.behavioral.map(b =>
+      h('div', {class:'card', style:'cursor:default'},
+        h('div', {class:'card-title'}, h('span',{class:'badge b-blue',style:'margin-right:0.4rem'},'CONVENTION'), b.name),
+        h('div', {class:'card-body'}, b.desc)
+      )
+    )),
+    h('div', {class:'section-header'}, h('h2', null, 'Sandbox Matrix')),
+    h('div', {class:'table-wrap'},
+      h('table', null,
+        h('thead', null, h('tr', null, h('th',null,'Agent'), h('th',null,'Sandbox'), h('th',null,'Network'), h('th',null,'Workspace'))),
+        h('tbody', null, ...D.agents.map(a =>
+          h('tr', null,
+            h('td', null, a.emoji + ' ' + a.id),
+            h('td', null, sandboxBadge(a.sandbox)),
+            h('td', null, a.sandbox === 'off' ? 'host' : a.id === 'researcher' ? 'bridge' : 'none'),
+            h('td', null, a.workspace === 'rw' ? 'read/write' : a.workspace === 'ro' ? 'read-only' : a.workspace)
+          )
+        ))
+      )
+    ),
+    h('div', {class:'section-header'}, h('h2', null, 'Plugins (' + sec.plugins.length + ')')),
+    h('div', {class:'detail',style:'margin-top:0'},
+      h('div', {style:'display:flex;flex-wrap:wrap;gap:0.4rem'},
+        ...sec.plugins.map(p => h('span', {class:'badge b-gray'}, p))
+      )
+    )
+  );
+}
+
+// === MEMORY DOMAIN ===
+function renderMemoryDomain() {
+  const mem = D.memory;
+  return h('div', null,
+    h('div', {class:'section-header'}, h('h2', null, 'Vector Database (Qdrant)')),
+    h('div', {class:'detail',style:'margin-top:0'},
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Collection'), h('span',{class:'kv-value mono'},mem.vectorDb.collection)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Points'), h('span',{class:'kv-value',style:'font-size:1.5rem;font-weight:700;color:var(--bright)'},mem.vectorDb.points)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Port'), h('span',{class:'kv-value mono'},String(mem.vectorDb.port)))
+    ),
+    h('div', {class:'section-header'}, h('h2', null, 'Embeddings')),
+    h('div', {class:'grid'},
+      h('div', {class:'card',style:'cursor:default;border-left:3px solid var(--green)'},
+        h('div', {class:'card-title'}, 'Primary: ' + mem.embeddings.primary.provider),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Model'), h('span',{class:'kv-value mono'},mem.embeddings.primary.model)),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Dimensions'), h('span',{class:'kv-value'},String(mem.embeddings.primary.dims))),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Endpoint'), h('span',{class:'kv-value mono'},mem.embeddings.primary.endpoint))
+      ),
+      h('div', {class:'card',style:'cursor:default;border-left:3px solid var(--orange)'},
+        h('div', {class:'card-title'}, 'Fallback: ' + mem.embeddings.fallback.provider),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Model'), h('span',{class:'kv-value mono'},mem.embeddings.fallback.model)),
+        h('div', {class:'kv'}, h('span',{class:'kv-label'},'Dimensions'), h('span',{class:'kv-value'},String(mem.embeddings.fallback.dims)))
+      )
+    ),
+    h('div', {class:'section-header'}, h('h2', null, 'Search Configuration')),
+    h('div', {class:'detail',style:'margin-top:0'},
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Type'), h('span',{class:'kv-value'},mem.search.type)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Vector Weight'), h('span',{class:'kv-value'},String(mem.search.vectorWeight))),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Text Weight'), h('span',{class:'kv-value'},String(mem.search.textWeight))),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Temporal Decay'), h('span',{class:'kv-value'},mem.search.temporalDecay))
+    ),
+    h('div', {class:'section-header'}, h('h2', null, 'File-Based Memory')),
+    h('div', {class:'detail',style:'margin-top:0'},
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Daily Logs'), h('span',{class:'kv-value'},mem.fileBased.dailyLogs + ' files')),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Reference Files'), h('span',{class:'kv-value'},mem.fileBased.referenceFiles + ' files')),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Session Window'), h('span',{class:'kv-value'},mem.sessionIndexing.window)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Chunk Size'), h('span',{class:'kv-value'},mem.sessionIndexing.chunkSize)),
+      h('div', {class:'kv'}, h('span',{class:'kv-label'},'Session TTL'), h('span',{class:'kv-value'},mem.sessionIndexing.ttl))
+    ),
+    h('div', {class:'section-header'}, h('h2', null, 'Agent Access')),
+    h('div', {class:'table-wrap'},
+      h('table', null,
+        h('thead', null, h('tr', null, h('th',null,'Agent'), h('th',null,'Memory Search'))),
+        h('tbody', null, ...D.agents.map(a =>
+          h('tr', null,
+            h('td', null, a.emoji + ' ' + a.id),
+            h('td', null, a.memorySearch ? '✅ enabled' : '❌ disabled')
+          )
+        ))
+      )
+    )
+  );
+}
+
+// === RISK VIEW ===
+function renderRiskView() {
+  const spof = [
+    {label:'Gateway (openclaw-gateway)', note:'All 9 agents, all cron, all heartbeats route through this'},
+    {label:'BWS Machine Token', note:'All secrets, all CLI commands depend on this'},
+    {label:'Anthropic API Key', note:'Primary provider for 7 of 9 agents'},
+    {label:'WSL2 Instance', note:'Entire fleet runs inside WSL2 on desktop-h1e8sn1'},
+  ];
+  const degraded = [
+    {label:'LM Studio', note:'Embeddings fall back to OpenAI (costs $)'},
+    {label:'Codex OAuth', note:'coder falls back to Sonnet 4.6; expires ~Mar 9'},
+    {label:'GitHub Copilot Token', note:'Fallback provider; static token, no expiry'},
+    {label:'Qdrant', note:'Memory search returns empty; file-based still works'},
+    {label:'Disk >80%', note:'Ops auto-cleans; >90% needs Cole'},
+  ];
+  const robust = [
+    {label:'Config Guardian', note:'Auto-reverts invalid config every 5min'},
+    {label:'Golden Backup', note:'Read-only 444 permissions, immutable'},
+    {label:'Tool Deny Lists', note:'Gateway-enforced, agents cannot bypass'},
+    {label:'Docker Sandboxes', note:'researcher + sanitizer + lmstudio isolated'},
+    {label:'Cron Auto-Reset', note:'ops resets failed crons (consecutiveErrors ≥ 3)'},
+    {label:'Session Pruning', note:'14-day auto-prune, 400 max entries'},
+    {label:'3-Deep Model Fallbacks', note:'Most agents have 2+ fallback models'},
+  ];
+
+  return h('div', null,
+    h('div', {class:'risk-cols'},
+      h('div', {class:'risk-col spof'},
+        h('h3', null, '❌ Single Points of Failure'),
+        ...spof.map(i => h('div',{class:'risk-item'}, h('div',{class:'label'},i.label), h('div',{class:'note'},i.note)))
+      ),
+      h('div', {class:'risk-col degraded'},
+        h('h3', null, '⚠️ Degraded If Failed'),
+        ...degraded.map(i => h('div',{class:'risk-item'}, h('div',{class:'label'},i.label), h('div',{class:'note'},i.note)))
+      ),
+      h('div', {class:'risk-col robust'},
+        h('h3', null, '✅ Self-Healing / Robust'),
+        ...robust.map(i => h('div',{class:'risk-item'}, h('div',{class:'label'},i.label), h('div',{class:'note'},i.note)))
+      )
+    ),
+    h('div', {class:'section-header'}, h('h2', null, 'Failure Cascades')),
+    ...D.cascades.map(c => {
+      const severity_color = c.severity === 'total' ? 'red' : c.severity === 'major' ? 'orange' : c.severity === 'minor' ? 'green' : 'orange';
+      const card = h('div', {class:'cascade'},
+        h('div', {class:'cascade-header', onclick: function() { this.parentElement.classList.toggle('open'); } },
+          h('span', {class:'cascade-arrow'}, '▶'),
+          h('span', {class:'badge b-' + severity_color, style:'margin:0 0.4rem'}, c.severity),
+          h('h4', null, c.trigger)
+        ),
+        h('div', {class:'cascade-body'},
+          h('ul', {class:'impact-list'}, ...c.impacts.map(i => h('li', null, i))),
+          h('div', {style:'margin-top:0.5rem;padding:0.5rem;background:var(--bg);border-radius:6px;font-size:0.82rem'},
+            h('strong', null, 'Recovery: '),
+            c.recovery
+          ),
+          c.selfHeals ? h('div',{style:'margin-top:0.3rem;font-size:0.8rem;color:var(--green)'},'✅ Self-heals with fallback') : h('div',{style:'margin-top:0.3rem;font-size:0.8rem;color:var(--red)'},'❌ Requires manual intervention')
+        )
+      );
+      return card;
+    })
+  );
+}
+
+// === SYSTEM MAP (Cytoscape.js) ===
+function renderGraphView() {
+  if (window.__cyFailed || typeof cytoscape === 'undefined') {
+    return h('div', {class:'graph-fallback'},
+      h('p', null, 'System Map requires internet (Cytoscape.js CDN).'),
+      h('p', null, 'Use the Hub and domain views for full system details.')
+    );
+  }
+  const container = h('div', {id:'graph-container'});
+  setTimeout(() => initGraph(container), 50);
+  return h('div', null,
+    h('div', {style:'font-size:0.8rem;color:var(--dim);margin-bottom:0.5rem'}, 'Click nodes to explore. Drag to rearrange. Scroll to zoom.'),
+    container
+  );
+}
+
+function initGraph(container) {
+  if (!container || !container.offsetHeight) return;
+  try {
+    if (typeof cytoscapeDagre !== 'undefined') cytoscape.use(cytoscapeDagre);
+  } catch(e) {}
+
+  const nodes = [];
+  const edges = [];
+
+  // Agent nodes
+  D.agents.forEach(a => {
+    nodes.push({ data: { id: a.id, label: a.emoji + ' ' + a.id, type: 'agent', tier: a.tier, parent: 'fleet' } });
+  });
+  // Group nodes
+  nodes.push({ data: { id: 'fleet', label: 'Fleet Agents' } });
+  nodes.push({ data: { id: 'infra', label: 'Infrastructure' } });
+  nodes.push({ data: { id: 'providers', label: 'Providers' } });
+
+  // Infrastructure nodes
+  nodes.push({ data: { id: 'gateway', label: '⚙️ Gateway', type: 'service', parent: 'infra' } });
+  nodes.push({ data: { id: 'qdrant', label: '💾 Qdrant', type: 'service', parent: 'infra' } });
+  nodes.push({ data: { id: 'lmstudio-svc', label: '🧠 LM Studio', type: 'service', parent: 'infra' } });
+  nodes.push({ data: { id: 'guardian', label: '🛡️ Config Guardian', type: 'service', parent: 'infra' } });
+
+  // Provider nodes
+  D.infrastructure.providers.forEach(p => {
+    nodes.push({ data: { id: 'prov-' + p.name, label: p.name, type: 'provider', parent: 'providers' } });
+  });
+
+  // Edges: agents -> gateway
+  D.agents.forEach(a => {
+    edges.push({ data: { source: a.id, target: 'gateway', label: 'routes through' } });
+  });
+
+  // Edges: delegation
+  edges.push({ data: { source: 'main', target: 'coder', label: 'delegates' } });
+  edges.push({ data: { source: 'main', target: 'oracle', label: 'delegates' } });
+  edges.push({ data: { source: 'main', target: 'researcher', label: 'delegates' } });
+  edges.push({ data: { source: 'main', target: 'ops', label: 'delegates' } });
+  edges.push({ data: { source: 'main', target: 'scribe', label: 'delegates' } });
+  edges.push({ data: { source: 'oracle', target: 'researcher', label: 'dispatches' } });
+
+  // Edges: memory
+  edges.push({ data: { source: 'qdrant', target: 'lmstudio-svc', label: 'embeddings' } });
+
+  // Edges: providers
+  D.agents.forEach(a => {
+    const provId = 'prov-' + { anthropic:'Anthropic', 'openai-codex':'OpenAI Codex', 'github-copilot':'GitHub Copilot' }[a.model.primary.provider];
+    if (provId) edges.push({ data: { source: a.id, target: provId, label: 'primary model' } });
+  });
+
+  const cy = cytoscape({
+    container: container,
+    elements: { nodes, edges },
+    style: [
+      { selector: 'node', style: {
+        'label': 'data(label)', 'text-valign': 'center', 'text-halign': 'center',
+        'font-size': '10px', 'color': '#e6edf3', 'text-wrap': 'wrap',
+        'background-color': '#161b22', 'border-width': 2, 'border-color': '#30363d',
+        'width': 50, 'height': 50, 'shape': 'round-rectangle',
+      } },
+      { selector: 'node[type="agent"]', style: {
+        'background-color': '#1c2129', 'border-color': '#a371f7', 'width': 60, 'height': 40,
+      } },
+      { selector: 'node[tier="conditional"]', style: { 'border-color': '#484f58', 'opacity': 0.7 } },
+      { selector: 'node[type="service"]', style: { 'background-color': '#1c2129', 'border-color': '#58a6ff', 'shape': 'round-rectangle' } },
+      { selector: 'node[type="provider"]', style: { 'background-color': '#1c2129', 'border-color': '#3fb950', 'shape': 'ellipse' } },
+      { selector: ':parent', style: {
+        'background-color': '#0d1117', 'border-color': '#30363d', 'border-width': 1,
+        'text-valign': 'top', 'text-halign': 'center', 'font-size': '12px', 'color': '#8b949e',
+        'padding': '20px',
+      } },
+      { selector: 'edge', style: {
+        'width': 1, 'line-color': '#30363d', 'target-arrow-color': '#30363d',
+        'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'opacity': 0.5,
+        'font-size': '8px', 'color': '#8b949e',
+      } },
+      { selector: 'edge[label="delegates"]', style: { 'line-color': '#a371f7', 'target-arrow-color': '#a371f7', 'opacity': 0.8, 'width': 2 } },
+      { selector: 'edge[label="dispatches"]', style: { 'line-color': '#f0883e', 'target-arrow-color': '#f0883e', 'opacity': 0.7 } },
+      { selector: 'edge[label="embeddings"]', style: { 'line-color': '#3fb950', 'target-arrow-color': '#3fb950' } },
+      { selector: 'node:selected', style: { 'border-color': '#f0f6fc', 'border-width': 3 } },
+    ],
+    layout: { name: typeof dagre !== 'undefined' ? 'dagre' : 'cose', rankDir: 'TB', nodeSep: 30, rankSep: 60, padding: 20 },
+    minZoom: 0.3, maxZoom: 3,
+  });
+
+  cy.on('tap', 'node[type="agent"]', function(evt) {
+    navigate('detail', 'agents', evt.target.id());
+  });
+}
+
+// === MAIN RENDER ===
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  app.appendChild(renderHeader());
+  app.appendChild(renderNav());
+  app.appendChild(renderBreadcrumb());
+
+  let content;
+  switch(state.view) {
+    case 'hub': content = renderHub(); break;
+    case 'domain':
+      switch(state.domain) {
+        case 'agents': content = renderAgentsDomain(); break;
+        case 'infrastructure': content = renderInfrastructureDomain(); break;
+        case 'automation': content = renderAutomationDomain(); break;
+        case 'communication': content = renderCommunicationDomain(); break;
+        case 'security': content = renderSecurityDomain(); break;
+        case 'memory': content = renderMemoryDomain(); break;
+        default: content = renderHub();
+      }
+      break;
+    case 'detail':
+      if (state.domain === 'agents') content = renderAgentDetail(state.component);
+      else content = h('div', null, 'Detail view for ' + state.component);
+      break;
+    case 'graph': content = renderGraphView(); break;
+    case 'risk': content = renderRiskView(); break;
+    default: content = renderHub();
+  }
+  app.appendChild(content);
+}
+
+// === INIT ===
+window.addEventListener('popstate', function(e) {
+  if (e.state) { state = e.state; render(); }
+  else { state = { view:'hub', domain:null, component:null, riskView:false }; render(); }
+});
+
+// Parse hash on load
+const hash = location.hash.replace('#','').split('/');
+if (hash[0] && hash[0] !== '') {
+  state.view = hash[0];
+  state.domain = hash[1] || null;
+  state.component = hash[2] || null;
+}
+render();
+</script>
 </body>
 </html>
