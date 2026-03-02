@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CROWBOT · Autonomous Fleet</title>
+  <style>
+    :root {
+      --bg: #0b0f1a;
+      --card: #141928;
+      --accent: #7c3aed;
+      --gold: #d4a017;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: #312e81;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 15% 20%, rgba(124,58,237,0.18), transparent 35%),
+                  radial-gradient(circle at 85% 10%, rgba(212,160,23,0.10), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap { width: min(1120px, 92vw); margin: 0 auto; }
+    .hero {
+      text-align: center;
+      padding: 84px 0 52px;
+      border: 1px solid rgba(124,58,237,0.35);
+      border-radius: 20px;
+      margin-top: 28px;
+      background: linear-gradient(120deg, rgba(124,58,237,0.18), rgba(11,15,26,0.95), rgba(212,160,23,0.10));
+      background-size: 200% 200%;
+      animation: pulse 12s ease-in-out infinite;
+      box-shadow: 0 0 0 1px rgba(124,58,237,0.2) inset, 0 0 45px rgba(124,58,237,0.16);
+    }
+    @keyframes pulse {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .crow { font-size: 96px; margin-bottom: 8px; }
+    h1 {
+      margin: 0;
+      font-size: clamp(44px, 9vw, 92px);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: #f8fafc;
+      text-shadow: 0 0 18px rgba(124,58,237,0.72), 0 0 45px rgba(124,58,237,0.40);
+      font-weight: 900;
+    }
+    .tagline {
+      margin-top: 14px;
+      color: var(--gold);
+      font-size: clamp(19px, 3vw, 31px);
+      font-style: italic;
+      font-weight: 700;
+    }
+    .sub {
+      margin-top: 10px;
+      color: #cbd5e1;
+      font-size: clamp(14px, 2.2vw, 22px);
+    }
+    section { margin-top: 44px; }
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(24px, 3.2vw, 34px);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 14px;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+      min-height: 128px;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px rgba(124,58,237,0.28);
+    }
+    .card .title { font-weight: 800; font-size: 18px; margin-bottom: 6px; }
+    .card .model { color: #c4b5fd; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+    .card .role { color: var(--muted); font-size: 14px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      background: linear-gradient(90deg, rgba(76,29,149,0.58), rgba(49,46,129,0.9));
+      border: 1px solid rgba(124,58,237,0.45);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .stat {
+      text-align: center;
+      background: rgba(15,23,42,0.75);
+      border-radius: 12px;
+      border: 1px solid rgba(124,58,237,0.35);
+      padding: 13px 10px;
+    }
+    .stat .n { font-size: 30px; font-weight: 900; color: #f8fafc; line-height: 1; }
+    .stat .l { color: #cbd5e1; font-size: 12px; margin-top: 7px; letter-spacing: .03em; text-transform: uppercase; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .feature {
+      background: #10172a;
+      border: 1px solid #2e1065;
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .feature h3 { margin: 0 0 8px; color: #ddd6fe; font-size: 20px; }
+    .feature p { margin: 0; color: #94a3b8; }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+    .badge {
+      border: 1px solid #312e81;
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: #111827;
+      color: #e5e7eb;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    footer {
+      margin-top: 46px;
+      border-top: 1px solid rgba(124,58,237,0.5);
+      color: #94a3b8;
+      text-align: center;
+      padding: 18px 0 30px;
+      font-size: 14px;
+    }
+    @media (max-width: 920px) {
+      .grid, .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .grid, .feature-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { padding: 62px 16px 38px; }
+      .crow { font-size: 84px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="crow">🐦‍⬛</div>
+      <h1>CROWBOT</h1>
+      <div class="tagline">Getting it right over getting it done.</div>
+      <div class="sub">A 9-agent autonomous AI fleet running 24/7</div>
+    </header>
+
+    <section>
+      <h2>Fleet Grid</h2>
+      <div class="grid">
+        <article class="card"><div class="title">🧠 main</div><div class="model">Sonnet 4.6</div><div class="role">Orchestrator (no exec, no write — pure delegation)</div></article>
+        <article class="card"><div class="title">⚙️ coder</div><div class="model">Codex 5.3</div><div class="role">Builder (full host exec + write)</div></article>
+        <article class="card"><div class="title">🔮 oracle</div><div class="model">Sonnet 4.6</div><div class="role">Analyst (memory, forecasting)</div></article>
+        <article class="card"><div class="title">🕵️ researcher</div><div class="model">Sonnet 4.6</div><div class="role">Web Intel (Docker sandboxed)</div></article>
+        <article class="card"><div class="title">🛠️ ops</div><div class="model">Sonnet 4.6</div><div class="role">System Health (24/7 monitoring)</div></article>
+        <article class="card"><div class="title">✍️ scribe</div><div class="model">Sonnet 4.6</div><div class="role">Writer (docs, comms)</div></article>
+        <article class="card"><div class="title">🔒 sanitizer</div><div class="model">Sonnet 4.6</div><div class="role">Security (on-demand, read-only)</div></article>
+        <article class="card"><div class="title">⚡ admiral</div><div class="model">Opus 4.6</div><div class="role">Emergency Escalation</div></article>
+        <article class="card"><div class="title">🤖 lmstudio</div><div class="model">Haiku 4.5</div><div class="role">Heartbeat + Local Embeddings</div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Stats Bar</h2>
+      <div class="stats">
+        <div class="stat"><div class="n">9</div><div class="l">Specialized Agents</div></div>
+        <div class="stat"><div class="n">12</div><div class="l">Autonomous Cron Jobs</div></div>
+        <div class="stat"><div class="n">2,400+</div><div class="l">Vector Memory Points</div></div>
+        <div class="stat"><div class="n">68</div><div class="l">Smoke Test Checks</div></div>
+        <div class="stat"><div class="n">24/7</div><div class="l">Autonomous Operation</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="feature-grid">
+        <article class="feature">
+          <h3>Structural Security</h3>
+          <p>Tool restrictions enforced at platform level. Agents literally can’t access tools outside their role.</p>
+        </article>
+        <article class="feature">
+          <h3>Vector Memory</h3>
+          <p>Qdrant-backed with hybrid search, temporal decay, and hourly deduplication sweeps.</p>
+        </article>
+        <article class="feature">
+          <h3>Agent-to-Agent Messaging</h3>
+          <p>Persistent agents coordinate via sessions_send with fire-and-forget + wake callbacks.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tech Stack</h2>
+      <div class="badges">
+        <span class="badge">Claude Sonnet 4.6</span>
+        <span class="badge">OpenAI Codex 5.3</span>
+        <span class="badge">Qdrant</span>
+        <span class="badge">OpenClaw</span>
+        <span class="badge">Docker</span>
+        <span class="badge">Bitwarden Secrets</span>
+        <span class="badge">Tailscale</span>
+        <span class="badge">Discord</span>
+        <span class="badge">WSL2</span>
+      </div>
+    </section>
+
+    <footer>Built by Cole &amp; Crowbot · Running since 2026 · Barrie, Ontario · 🐦‍⬛</footer>
+  </div>
+</body>
+</html>
