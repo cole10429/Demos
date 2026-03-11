@@ -2,15 +2,42 @@
 
 This repository is a collection of static HTML pages.
 
-## View the site in a browser from GitHub
+## Yes — this is doable
 
-The simplest way to open `main/index.html` or any individual page from GitHub is to publish the repository with **GitHub Pages**.
+GitHub Pages can turn this repository into a live website.
 
-1. In GitHub, open **Settings** → **Pages**
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**
-3. Push to `main` or run the **Deploy static site to Pages** workflow manually
+That gives you:
 
-Once GitHub Pages is enabled, the live URLs for this repository are:
+- one main index page for all demos: `https://cole10429.github.io/Demos/`
+- one direct link for each individual demo page, such as `https://cole10429.github.io/Demos/crowbot/`
+
+## Exact steps to turn this on in GitHub
+
+Do this one time:
+
+1. Open this repository on GitHub
+2. Click the **Settings** tab at the top of the repository
+3. In the left sidebar, click **Pages**
+4. In the **Build and deployment** section, set **Source** to **GitHub Actions**
+5. Wait a moment for GitHub to save that setting
+6. Click the **Actions** tab
+7. Open the workflow named **Deploy static site to Pages**
+8. Click **Run workflow**
+9. Choose the `main` branch
+10. Click the green **Run workflow** button
+11. Wait for the workflow to finish
+12. Open your live site at `https://cole10429.github.io/Demos/`
+
+If the workflow has already run successfully once, future pushes to `main` will redeploy the site automatically.
+
+## How to use it after that
+
+Once GitHub Pages is enabled, you will have:
+
+- a main index page that lists all demos
+- a direct URL for each demo that you can send to a client
+
+For this repository, the live URLs are:
 
 - Index: `https://cole10429.github.io/Demos/`
 - ClickUp demo: `https://cole10429.github.io/Demos/clickup/`
@@ -20,6 +47,25 @@ Once GitHub Pages is enabled, the live URLs for this repository are:
 - Results Test Page: `https://cole10429.github.io/Demos/results/test-page.html`
 
 If you fork this repository, replace `cole10429` with your GitHub username or organization in the URLs above.
+
+## How to add a new demo later
+
+When you create a new demo, do these two things:
+
+1. Add the new HTML page to this repository
+   - example: `/home/runner/work/Demos/Demos/my-new-demo/index.html`
+2. Add a link to it inside `/home/runner/work/Demos/Demos/index.html`
+
+Example link:
+
+```html
+<li><a href="./my-new-demo/index.html">My New Demo</a></li>
+```
+
+After that, when the site deploys again:
+
+- the main index will show the new demo
+- the new demo will also have its own direct link at `https://cole10429.github.io/Demos/my-new-demo/`
 
 ## Local preview
 
