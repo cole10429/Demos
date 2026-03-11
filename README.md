@@ -53,8 +53,8 @@ If you fork this repository, replace `cole10429` with your GitHub username or or
 When you create a new demo, do these two things:
 
 1. Add the new HTML page to this repository
-   - example: `/home/runner/work/Demos/Demos/my-new-demo/index.html`
-2. Add a link to it inside `/home/runner/work/Demos/Demos/index.html`
+   - example: `my-new-demo/index.html`
+2. Add a link to it inside `index.html`
 
 Example link:
 
